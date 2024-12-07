@@ -6,29 +6,37 @@ from PyQt6 import uic
 from PyQt6.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QMainWindow
 
 
-class YCircle(QMainWindow):
+class UI(QWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setWindowTitle('Get Yellow Circles')
+        self.setGeometry(300, 300, 900, 900)
+        self.button = QPushButton("перерисовать", self)
+        self.button.setGeometry(10, 10, 100, 20)
+
+
+class YCircle(QMainWindow, UI):
     def __init__(self):
+        self.setup()
         super().__init__()
-        uic.loadUi('UI.ui', self)
         self.qp = QPainter()
-        self.color = QColor(255, 0, 0)
-        self.initUI()
+        self.button.clicked.connect(self.button_clicked)
+
+    def setup(self):
+        self.color = QColor(randint(0, 255), randint(0, 255), randint(0, 255))
+        self.diameter = randint(0, 300)
+
+    def button_clicked(self):
+        self.update()
+        self.setup()
 
     def paintEvent(self, event):
         qp = QPainter()
-        # Начинаем процесс рисования
         qp.begin(self)
-        # qp.setBrush(QColor(0, 255, 255))
-        qp.setPen(QPen(Qt.GlobalColor.yellow))
-        diameter = randint(0, 300)
+        qp.setPen(self.color)
         x, y = self.geometry().size().width() / 2, self.geometry().size().height() / 2
-        qp.drawEllipse(QPointF(x, y), diameter, diameter)
+        qp.drawEllipse(QPointF(x, y), self.diameter, self.diameter)
         qp.end()
-
-    def initUI(self):
-        self.setWindowTitle('Get Yellow Circles')
-        self.btn = self.pushButton
-        self.btn.clicked.connect(self.update)
 
 
 if __name__ == '__main__':
